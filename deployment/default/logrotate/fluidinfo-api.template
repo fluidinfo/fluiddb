@@ -1,0 +1,26 @@
+{{ deployment-path }}/current/var/log/fluidinfo-api-*.log {
+    daily
+    missingok
+    rotate 30
+    compress
+    delaycompress
+    notifempty
+}
+
+# This logrotate configuration is based on the default Nginx
+# configuration in /etc/logrotate.d/nginx.  We need to duplicate it
+# because our site is configured to write Nginx access logs to a
+# non-default location.
+/var/lib/fluidinfo/logs/*.access.log {
+    daily
+    missingok
+    rotate 30
+    compress
+    delaycompress
+    notifempty
+    create 644 www-data adm
+    sharedscripts
+    postrotate
+        [ ! -f /var/run/nginx.pid ] || kill -USR1 `cat /var/run/nginx.pid`
+    endscript
+}

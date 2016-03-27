@@ -1,0 +1,26 @@
+#!/bin/sh -e
+
+for file in schema.xml solrconfig.xml
+do
+    cmp -s deployment/default/solr/$file /etc/solr/conf/$file || {
+        echo "*** /etc/solr/conf/$file check failed - Run 'make setup-solr' before continuing. ***"
+        exit 1
+    }
+done
+
+tmp=/tmp/data-config.xml-$$
+cp deployment/default/solr/data-config.xml.template $tmp
+sed -i -e 's/{{ postgres-uri }}/postgresql:\/\/localhost:5432\/fluidinfo-unit-test/g' $tmp
+sed -i -e 's/{{ num-shards }}/1/g' $tmp
+sed -i -e 's/{{ shard-id }}/0/g' $tmp
+
+
+cmp -s /etc/solr/conf/data-config.xml $tmp || {
+    echo "*** /etc/solr/conf/data-config.xml check failed - Run 'make setup-solr' before continuing. ***"
+    rm $tmp
+    exit 1
+}
+
+rm $tmp
+
+exit 0

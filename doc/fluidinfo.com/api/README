@@ -1,0 +1,25 @@
+Deployment
+==========
+
+We use fabric (0.9.2) for automating the deployment of this website.
+To deploy the website to the live server, run::
+
+    $ fab live deploy
+
+*NOTE* - You must commit your changes in bzr ***BEFORE*** you deploy the
+website.
+
+The above fab command is actually just doing two things:
+
+1) Build the static HTML files from the information in the registry
+2) Copy the generated files to the remote server
+
+If something goes wrong in deployment and you need to revert to an
+earlier version, it's very simple since each deployment has its own
+directory containing the website.
+
+You just need to point the web-server to the old deployment's
+directory. E.g.::
+
+    $ rm -f /var/www/api.example.com
+    $ ln -s /var/www/PATH_TO_OLD_DEPLOYMENT /var/www/api.example.com

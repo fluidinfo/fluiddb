@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+
+import os
+from subprocess import call, Popen, PIPE
+import sys
+
+sys.path.append('.')
+
+from fluiddb.testing.resources import IndexResource
+
+trial = os.environ['VIRTUAL_ENV'] + '/bin/trial'
+
+output = Popen('trial -n --reporter=bwverbose fluiddb'.split(),
+               stdout=PIPE).communicate()[0]
+
+tests = [line.split(' ... ')[0] for line in output.splitlines()
+         if line.startswith('fluiddb')]
+
+
+def isSolrTest(test):
+    moduleName = '.'.join(test.split('.')[:-2])
+    testCaseName = test.split('.')[-2]
+
+    module = __import__(moduleName, fromlist=[testCaseName])
+    testCase = getattr(module, testCaseName)
+    return any(isinstance(resource[1], IndexResource)
+               for resource in getattr(testCase, 'resources', []))
+
+solr_tests = []
+other_tests = []
+
+
+for test in tests:
+    if isSolrTest(test):
+        solr_tests.append(test)
+    else:
+        other_tests.append(test)
+
+NUM_PROCESSES = os.environ.get('FLUIDDB_MAKE_NUM_PROCESSES', 4)
+BATCH_SIZE = 100
+
+processes = [None] * NUM_PROCESSES
+
+
+def startProcess(db, tests):
+    dbname = 'fluidinfo-unit-test' + ('-' + str(db) if db != 0 else '')
+    uri = 'postgres://fluidinfo:fluidinfo@localhost/' + dbname
+    process = Popen([trial, '--reporter=text'] + tests,
+                    stdout=sys.stdout, stderr=sys.stderr,
+                    env={'FLUIDDB_DB': uri, 'FLUIDDB_CACHE': str(i + 1)})
+    print 'starting process', db
+    processes[db] = process
+
+
+for i in range(NUM_PROCESSES):
+    dbname = 'fluidinfo-unit-test' + ('-' + str(i) if i != 0 else '')
+    call('sudo -u postgres createdb %s -O fluidinfo' % dbname, shell=True)
+
+    if i == 0:
+        tests = solr_tests
+    else:
+        tests = other_tests[:BATCH_SIZE]
+        other_tests = other_tests[BATCH_SIZE:]
+
+    startProcess(i, tests)
+
+
+while any(process.poll() is None for process in processes):
+    for i in range(len(processes)):
+        process = processes[i]
+        if process.poll() is not None and other_tests:
+            tests = other_tests[:BATCH_SIZE]
+            other_tests = other_tests[BATCH_SIZE:]
+            startProcess(i, tests)
+
+
+for i in range(NUM_PROCESSES):
+    dbname = 'fluidinfo-unit-test' + ('-' + str(i) if i != 0 else '')
+    call('sudo -u postgres dropdb %s' % dbname, shell=True)
+    call('rm -rf _trial_temp*', shell=True)

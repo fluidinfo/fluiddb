@@ -1,0 +1,17 @@
+# Note that client_max_body_size also appears below, in the 'location' block.
+client_max_body_size 10m;
+
+server {
+    listen                80 default;
+    server_name           {{ server-name }};
+    access_log            /var/lib/fluidinfo/logs/main.access.log;
+
+    location / {
+        # Maximum request size of 10 Mb
+        client_max_body_size  10m;
+        # A 10 min timeout on requests.
+        proxy_read_timeout    600;
+        proxy_set_header      Host $http_host;
+        proxy_pass            http://127.0.0.1:9000;
+    }
+}

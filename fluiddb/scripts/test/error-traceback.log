@@ -1,0 +1,13 @@
+2011-06-14 10:33:33,312    ERROR  Unknown path u'fluidinfo/chrome-ext.xml'.
+Traceback (most recent call last):
+  File "/fluiddb/api/value.py", line 47, in run
+    result = tagValues.get([objectID], [path])
+  File "/fluiddb/security/value.py", line 25, in get
+    deniedOperations = self._permissions.check(pathsAndOperations)
+  File "/fluiddb/model/permission.py", line 298, in check
+    return checker.check(values)
+  File "/fluiddb/model/permission.py", line 444, in check
+    return deniedOperations + self._getDeniedOperations(storedOperations)
+  File "/fluiddb/model/permission.py", line 368, in _getDeniedOperations
+    raise UnknownPathError(unknownPaths)
+UnknownPathError: Unknown path u'fluidinfo/chrome-ext.xml'.

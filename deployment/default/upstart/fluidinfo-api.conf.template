@@ -1,0 +1,16 @@
+description "Start and stop the pool of Fluidinfo API services"
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+
+task
+
+script
+    start fluidinfo-api-node PORT=9001
+    start fluidinfo-api-node PORT=9002
+    start fluidinfo-api-node PORT=9003
+    start fluidinfo-api-node PORT=9004
+    start fluidinfo-api-node PORT=9005
+    start fluidinfo-api-node PORT=9006
+    start fluidinfo-api-node PORT=9007
+    start fluidinfo-api-node PORT=9008
+end script

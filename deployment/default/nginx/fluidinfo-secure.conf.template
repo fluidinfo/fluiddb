@@ -1,0 +1,47 @@
+# Note that client_max_body_size also appears twice below, in the 'location' blocks.
+client_max_body_size 10m;
+
+server {
+    listen                80 default;
+    server_name           {{ server-name }};
+    access_log            /var/lib/fluidinfo/logs/main.access.log;
+
+    location / {
+        # Maximum request size of 10 Mb
+        client_max_body_size  10m;
+        # A 10 min timeout on requests.
+        proxy_read_timeout    600;
+        proxy_set_header      Host $http_host;
+        proxy_pass            http://127.0.0.1:9000;
+
+        # force /users/username/verify to use https
+        rewrite ^/users/[^/]+/verify$ https://$server_name$request_uri? ;
+    }
+}
+
+server {
+    listen                443;
+    server_name           {{ server-name }};
+    access_log            /var/lib/fluidinfo/logs/main-ssl.access.log;
+    ssl                   on;
+
+    # To get more performance out of nginx SSL, remove its ability to negotiate
+    # slow encryption ciphers. (DHE = "Diffie-Hellman Ephemeral")
+    # More info there: http://matt.io/technobabble/hivemind_devops_alert:_nginx_does_not_suck_at_ssl/ur
+
+    ssl_ciphers           ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:!kEDH;
+    ssl_prefer_server_ciphers on;
+
+    ssl_certificate       /etc/nginx/ssl/fluidinfo.pem;
+    ssl_certificate_key   /etc/nginx/ssl/fluidinfo.key;
+
+    location / {
+        # Maximum request size of 10 Mb
+        client_max_body_size  10m;
+        # A 10 min timeout on requests.
+        proxy_read_timeout    600;
+        proxy_set_header      X-Forwarded-Protocol https;
+        proxy_set_header      Host $http_host;
+        proxy_pass            http://127.0.0.1:9000;
+    }
+}

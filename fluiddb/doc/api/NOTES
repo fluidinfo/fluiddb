@@ -1,0 +1,16 @@
+description
+first appeared in
+
+note
+  - relevant to versions x..y, z
+
+example
+  - url (with args etc)
+  - expected return results
+    - code
+    - payload
+    - headers
+  - description
+  - called successfully?
+  - return result
+  - return payload

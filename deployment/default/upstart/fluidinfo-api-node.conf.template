@@ -1,0 +1,17 @@
+description "Start and stop a node in the Fluidinfo API service pool"
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on stopping network
+stop on starting shutdown
+
+instance $PORT
+
+chdir {{ deployment-path }}/current/fluidinfo
+exec sudo -u fluidinfo bin/python bin/fluidinfo-api \
+    --port $PORT \
+    --nodaemon \
+    --no_save \
+    --pidfile {{ deployment-path }}/current/var/run/fluidinfo-api-$PORT.$$.pid \
+    --logfile {{ deployment-path }}/current/var/log/fluidinfo-api-$PORT.log \
+    --config  {{ deployment-path }}/current/fluidinfo-api.conf
+respawn

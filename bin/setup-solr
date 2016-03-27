@@ -1,0 +1,18 @@
+#!/bin/sh -e
+
+ant jar
+sudo rm -f /usr/share/solr/WEB-INF/lib/postgresql.jar
+sudo rm -f /usr/share/solr/WEB-INF/lib/noggit.jar
+sudo ln -s /usr/share/java/postgresql.jar /usr/share/solr/WEB-INF/lib/
+sudo ln -s /usr/share/java/noggit.jar /usr/share/solr/WEB-INF/lib/
+sudo cp deployment/default/solr/schema.xml /etc/solr/conf
+sudo cp deployment/default/solr/solrconfig.xml /etc/solr/conf
+sudo cp deployment/default/solr/dataimport.properties /etc/solr/conf/dataimport.properties
+sudo chown tomcat6:tomcat6 /etc/solr/conf/dataimport.properties
+sudo cp deployment/default/solr/data-config.xml.template /etc/solr/conf/data-config.xml
+sudo sed -i -e 's/{{ postgres-uri }}/postgresql:\/\/localhost:5432\/fluidinfo-unit-test/g' /etc/solr/conf/data-config.xml
+sudo sed -i -e 's/{{ num-shards }}/1/g' /etc/solr/conf/data-config.xml
+sudo sed -i -e 's/{{ shard-id }}/0/g' /etc/solr/conf/data-config.xml
+sudo cp deployment/default/solr/web.xml /etc/solr/web.xml
+sudo cp dist/tagvaluetransformer.jar /usr/share/solr/WEB-INF/lib
+sudo /etc/init.d/tomcat6 restart

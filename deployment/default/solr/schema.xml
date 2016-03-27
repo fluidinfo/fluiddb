@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <!--
+        Solr Schema for FluidDB Text Indexing. This file is based on the
+        example configuration file provided in the standard Solr
+        distribution. Each document represents a tag value. The primary
+        key is composed from the object id and the tag path. The only
+        stored field is the objectid, as this is the only field that is
+        going to be returned in searches. Tag paths and values are
+        indexed.
+
+        We use dynamic fields for indexing values, based on the tag path and
+        the type of the value. Depending on the type the field names end like:
+
+        - TAG_PATH_tag_raw_str: For indexing raw strings. Full text search is
+            not enabled, meaning that one can only query for exact values.
+        - TAG_PATH_tag_number: For indexing numbers.
+        - TAG_PATH_tag_bool: For indexing booleans.
+        - TAG_PATH_tag_null: For indexing null values.
+        - TAG_PATH_tag_set_str: For indexing sets of strings. Like
+            raw_value_str, full text search is not active for this field.
+        - TAG_PATH_tag_fts: For indexing strings and sets of strings. In this
+            case, we enable full text search. Also, this field is multiValued,
+            so we can index both normal strings and sets of strings using the
+            same field. When a "matches" query is issued, the user doesn't
+            know if instances of a particular tag are sets or normal strings.
+
+        Searches should be similar to this, for queries for fluiddb/about:
+
+        q=:"fluiddb/about_tag_raw_str:whatever"
+
+        We also use two extra fields, "fluiddb/id" for storing the object ID of
+        the object, and "paths" to index the paths of all the tag values to
+        support "has" queries.
+    -->
+<schema name="fluiddb" version="1.2">
+    <types>
+        <!-- String type used for identifiers -->
+        <fieldType name="string" class="solr.StrField"
+            sortMissingLast="true" omitNorms="true" />
+
+        <!-- Text field type used for tag values -->
+        <fieldType name="text" class="solr.TextField"
+            positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.WhitespaceTokenizerFactory" />
+                <filter class="solr.WordDelimiterFilterFactory"
+                    generateWordParts="1" generateNumberParts="1"
+                    catenateWords="0" catenateNumbers="0" catenateAll="0"
+                    splitOnCaseChange="1" preserveOriginal="1" />
+                <filter class="solr.LowerCaseFilterFactory" />
+                <filter class="solr.ReversedWildcardFilterFactory"
+                    withOriginal="true" maxPosAsterisk="2" maxPosQuestion="1"
+                    minTrailing="2" maxFractionAsterisk="0"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.PatternTokenizerFactory"
+                    pattern="\s+" />
+                <filter class="solr.LowerCaseFilterFactory" />
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="integer" class="solr.TrieIntField" precisionStep="8"
+               omitNorms="true" positionIncrementGap="0"/>
+        <fieldType name="double" class="solr.TrieDoubleField" precisionStep="8"
+               omitNorms="true" positionIncrementGap="0"/>
+        <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"
+               omitNorms="true"/>
+        <fieldType name="uuid" class="solr.UUIDField" sortMissingLast="true"
+               omitNorms="true"/>
+    </types>
+    <fields>
+        <!--
+            Primary key: ID of the object this document represents.
+        -->
+        <field name="fluiddb/id" type="uuid" indexed="true"
+            stored="true" required="true" />
+
+        <!-- the paths of all the tag values attached to this object. -->
+        <field name="paths" type="string" indexed="true" stored="false"
+            required="false" multiValued="true"/>
+
+        <!--
+             A dynamic field for numeric tag values. A field will be created
+             on the fly, based on the path of the tag.
+        -->
+        <dynamicField name="*_tag_number" type="double" indexed="true"
+            stored="false"/>
+
+        <!--
+             A dynamic field for boolean tag values. A field will be created on
+             the fly, based on the path of the tag.
+         -->
+        <dynamicField name="*_tag_bool" type="boolean" indexed="true"
+            stored="false"/>
+
+        <!--
+             A dynamic field for null tag values. A field will be created on
+             the fly, based on the path of the tag.
+         -->
+        <dynamicField name="*_tag_null" type="boolean" indexed="true"
+            stored="false"/>
+
+        <!--
+             A dynamic field for binary tag values. A field will be created on
+             the fly, based on the path of the tag.
+         -->
+        <dynamicField name="*_tag_binary" type="boolean" indexed="true"
+            stored="false"/>
+
+        <!--
+             A dynamic field for string tag values. A field will be created on
+             the fly, based on the path of the tag.
+
+             Not used for full text search (matches), only for simple queries
+             like joe/opinion = "good".
+        -->
+        <dynamicField name="*_tag_raw_str" type="string" indexed="true"
+            stored="false" />
+
+        <!--
+             A dynamic field for set of string tag values. A field will be
+             created on the fly, based on the path of the tag.
+
+             Only used for simple queries (contains).
+        -->
+        <dynamicField name="*_tag_set_str" type="string" indexed="true"
+            stored="false" multiValued="true"/>
+
+        <!--
+             A dynamic field for string and sets of strings tag values. A field
+             will be created on the fly, based on the path of the tag.
+
+             Not used for simple queries (=, contains), only for full text
+              search queries like joe/opinion matches "good".
+         -->
+        <dynamicField name="*_tag_fts" type="text" indexed="true" stored="false"
+            multiValued="true"/>
+
+        <copyField source="*_tag_raw_str" dest="*_tag_fts" />
+        <copyField source="*_tag_set_str" dest="*_tag_fts" />
+    </fields>
+    <uniqueKey>fluiddb/id</uniqueKey>
+
+    <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
+    <solrQueryParser defaultOperator="AND" />
+</schema>

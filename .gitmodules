@@ -1,0 +1,3 @@
+[submodule "bin/s3-multipart"]
+	path = bin/s3-multipart
+	url = https://github.com/fluidinfo/s3-multipart.git

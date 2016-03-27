@@ -1,0 +1,34 @@
+[service]
+temp-path = {{ deployment-path }}/current/var/tmp
+trace-path = {{ deployment-path }}/current/var/log
+max-threads = 1
+port = 9000
+allow-anonymous-access = true
+
+[store]
+main-uri = {{ postgres-uri }}
+
+[index]
+url = {{ solr-url }}
+shards = {{ solr-shards }}
+
+[cache]
+host = 127.0.0.1
+port = 6379
+db = 0
+expire-timeout = 3600
+
+[oauth]
+# These must be exactly 16 characters long.
+access-secret = _put_yours_here_
+renewal-secret = _put_yours_here_
+# Time in hours, 168h is one week.
+renewal-token-duration = 168
+
+[comments]
+extract-atnames = true
+extract-hashtags = true
+extract-plustags = true
+extract-urls = true
+extract-files = true
+file-object = :files:

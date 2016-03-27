@@ -1,0 +1,473 @@
+/**
+ * Sphinx stylesheet -- sphinxdoc theme
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Originally created by Armin Ronacher for Werkzeug, adapted by Georg Brandl
+ * then by Terry.
+ */
+
+/* -- page layout ----------------------------------------------------------- */
+
+body {
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva',
+                 'Verdana', sans-serif;
+    font-size: 14px;
+    /* letter-spacing: 0.01em; */
+    /* line-height: 150%; */
+    text-align: center;
+    background-color: #BFD1D4;
+    color: black;
+    padding: 0;
+    border: 1px solid #aaa;
+
+    margin: 0px 80px 0px 80px;
+    min-width: 740px;
+}
+
+div.toplink {
+    text-align: right;
+}
+
+div.toplink a {
+    text-decoration: none;
+    color: cccccc;
+}
+
+div.documentwrapper {
+    float: none;
+}
+
+div.document {
+    background-color: white;
+    text-align: left;
+}
+
+div.bodywrapper {
+    /* margin: 0 240px 0 0; */
+    /* border-right: 1px solid #ccc; */
+}
+
+div.body {
+    margin: 0;
+    padding: 0.5em 20px 20px 20px;
+}
+
+
+div.footer {
+    background-color: #E3EFF1;
+    color: #86989B;
+    padding: 3px 8px 3px 0;
+    clear: both;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+div.footer a {
+    color: #86989B;
+    text-decoration: underline;
+}
+
+div.error {
+    color: #000;
+    width: 90%;
+    background: #d99;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #933;
+    padding: 8px;
+    margin-bottom: 1em;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+div.error h1 {
+    display: inline;
+    font-size: 1.2em;
+    color: black;
+}
+
+div.error p {
+    display: inline;
+    font-size: 1em;
+}
+
+/* -- body styles ----------------------------------------------------------- */
+
+p {
+    margin: 0.8em 0 0.5em 0;
+}
+
+a {
+    color: #CA7900;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #2491CF;
+}
+
+div.body a {
+    text-decoration: underline;
+}
+
+h1 {
+    margin: 0;
+    padding: 0.7em 0 0.3em 0;
+    font-size: 1.5em;
+    color: #11557C;
+}
+
+h2 {
+    margin: 0.5em 0 0.2em 0;
+    font-size: 1.35em;
+    padding: 0;
+}
+
+h3 {
+    /* margin: 1em 0 -0.3em 0; */
+    margin: 1em 0 1em 0;
+    font-size: 1em;
+}
+
+div.body h1 a, div.body h2 a, div.body h3 a, div.body h4 a, div.body h5 a, div.body h6 a {
+    color: black!important;
+}
+
+h1 a.anchor, h2 a.anchor, h3 a.anchor, h4 a.anchor, h5 a.anchor, h6 a.anchor {
+    display: none;
+    margin: 0 0 0 0.3em;
+    padding: 0 0.2em 0 0.2em;
+    color: #aaa!important;
+}
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor,
+h5:hover a.anchor, h6:hover a.anchor {
+    display: inline;
+}
+
+h1 a.anchor:hover, h2 a.anchor:hover, h3 a.anchor:hover, h4 a.anchor:hover,
+h5 a.anchor:hover, h6 a.anchor:hover {
+    color: #777;
+    background-color: #eee;
+}
+
+a.headerlink {
+    color: #c60f0f!important;
+    font-size: 1em;
+    margin-left: 6px;
+    padding: 0 4px 0 4px;
+    text-decoration: none!important;
+}
+
+a.headerlink:hover {
+    background-color: #ccc;
+    color: white!important;
+}
+
+cite, code, tt {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    font-size: 0.95em;
+    letter-spacing: 0.01em;
+}
+
+tt {
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+}
+
+tt.descname, tt.descclassname, tt.xref {
+    border: 0;
+}
+
+hr {
+    border: 1px solid #abc;
+    margin: 2em;
+}
+
+a tt {
+    border: 0;
+    color: #CA7900;
+}
+
+a tt:hover {
+    color: #2491CF;
+}
+
+pre {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    font-size: 0.8em;
+    letter-spacing: 0.015em;
+    line-height: 120%;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+}
+
+pre a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+td.linenos pre {
+    padding: 0.5em 0;
+}
+
+div.raw_http {
+    overflow: auto;
+}
+
+.http_example h4 {
+    font-size: 0.9em;
+    margin: 0px;
+}
+
+div.quotebar {
+    background-color: #f8f8f8;
+    max-width: 250px;
+    float: right;
+    padding: 2px 7px;
+    border: 1px solid #ccc;
+}
+
+div.topic {
+    background-color: #f8f8f8;
+}
+
+table.verb {
+    border: none;
+    border-color: red;
+    margin: 2px 0 1em 0;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 2px 0 1em 0;
+    empty-cells: show;
+}
+
+/*
+table td, table th {
+    padding: 0.2em 0.5em 0.2em 0.5em;
+}
+*/
+
+div.intro {
+    font-size: 1.2em;
+}
+
+div.api {
+    /* font-size: 20px; */
+}
+
+div.version {
+    /* font-size: 19px; */
+}
+
+div.toplevel {
+    /* margin-left: 2%; */
+    /* font-size: 18px; */
+}
+
+div.func {
+    margin-left: 1.5%;
+    /* font-size: 17px; */
+    /* border: 1px solid; */
+    /* background: #d0d0d0; */
+}
+
+div.usages {
+    /* border-left: 1px solid #ccc; */
+    /* margin-top: 10px; */
+    margin-left: 2%;
+    /*  font-size: 16px; */
+}
+
+div.usageHead {
+    /* margin-top: 20px; */
+    /* font-family: "Courier New", Courier, monospace; */
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    letter-spacing: 0.03em;
+    /* letter-spacing: 0.01em; */
+    /* font-size: 16px; */
+    /* font-size: 0.95em; */
+    /* border-top: 1px solid #ccc; */
+    padding-top: 2px;
+    color: blue;
+}
+
+div.usage {
+    /* margin-top: 3px; */
+    /* margin-bottom: 3px; */
+    margin-left: 2%;
+    /* padding-top: 3px; */
+    /* padding-left: 3px; */
+    /* font-size: 16px; */
+}
+
+div.notes {
+    /* margin-top: 5px; */
+    /* margin-left: 2%; */
+    /* font-size: 16px; */
+}
+
+div.typography {
+    /* margin-left: 2%; */
+    /* font-size: 16px; */
+}
+
+span.note {
+    /* margin-left: 2%; */
+    /* font-size: 16px; */
+    /* border: 1px solid; */
+    /* background: #d0d000; */
+}
+
+span.adminOnly {
+    border: 1px solid;
+    background: yellow;
+    padding-left: 5px;
+    padding-right: 5px;
+    /* padding-top: 2px; */
+    /* padding-bottom: 2px; */
+}
+
+span.unimplemented {
+    border: 1px solid;
+    background: #ff6644;
+    padding-left: 5px;
+    padding-right: 5px;
+    /* padding-top: 2px; */
+    /* padding-bottom: 2px; */
+}
+
+td.adminOnly {
+    background: yellow;
+}
+
+td.unimplemented {
+    background: #ff6644;
+}
+
+span.tt {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    letter-spacing: 0.02em;
+    /* font-family: "Courier New", Courier, monospace; */
+    /* font-style: normal; */
+}
+
+span.exception {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    /* font-family: "Courier New", Courier, monospace; */
+    /* font-style: normal; */
+    color: red;
+}
+
+span.tag {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    letter-spacing: 0.03em;
+    /* font-family: "Courier New", Courier, monospace; */
+    /* font-style: normal; */
+    color: green;
+}
+
+span.obj {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    /* font-family: "Courier New", Courier, monospace; */
+    /* font-style: italic; */
+    color: green;
+}
+
+span.perm {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    letter-spacing: 0.02em;
+    /* font-weight: bold; */
+    /* font-family: "Courier New", Courier, monospace; */
+    /* font-style: normal; */
+    color: red;
+}
+
+span.httpError {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    /* font-family: "Courier New", Courier, monospace; */
+    /* font-style: normal; */
+    white-space: nowrap;
+}
+
+span.httpHeader {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    /* font-family: "Courier New", Courier, monospace; */
+    /* font-style: normal; */
+    white-space: nowrap;
+}
+
+span.URI {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    letter-spacing: 0.03em;
+    /* font-family: "Courier New", Courier, monospace; */
+    /* font-style: normal; */
+    color: blue;
+}
+
+span.var, span.attr {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', monospace;
+    letter-spacing: 0.03em;
+    /* font-family: "Courier New", Courier, monospace; */
+    /* color: blue; */
+    font-style: italic;
+    background: #c8c8c8;
+}
+
+table.summary {
+    margin-left: 3em;
+    /* border-collapse: collapse; */
+    /* width: 90%; */
+    /* empty-cells: show; */
+    /* font-size: 16px; */
+}
+
+table {
+    /* margin-top: 5px; */
+    /* border-collapse: collapse; */
+    /* width: 90%; */
+    /* font-size: 16px; */
+}
+
+th {
+    border: 1px solid;
+    /* border-color: #dddddd; */
+    /* background: #ccccff; */
+    /* background: #ADD8E6; */ /* Light Blue */
+    /* background: #AFEEEE; */ /* Pale Turquoise */
+    /* background: #B0E0E6; */ /* Powder Blue */
+    background: #d0d0d0;
+    font-weight: normal;
+    white-space: nowrap;
+    text-align: left;
+    padding: 0.1em;
+}
+
+td {
+    border-color: #bbb;
+    vertical-align: top;
+    border: 1px solid;
+    padding: 0.1em;
+}
+
+td.summary {
+    vertical-align: top;
+    padding: 0.2em;
+    border: none;
+}

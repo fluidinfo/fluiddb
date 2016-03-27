@@ -1,0 +1,80 @@
+#!/bin/sh -e
+
+# This performs a dump of PostgreSQL data and uploads it into S3. It does the
+# following:
+#
+# 1. Delete older backups until there's enough room, estimating at most 5%
+#    growth. Will refuse to delete the last valid backup though.
+# 2. Do a database dump if there's enough space for one.
+# 3. Copy the latest backup into the fluidinfo.com bucket on S3 with a prefix
+#    of $SERVER_NAME/backup/postgresql/.
+#
+# To save on S3 storage space, only the latest backup per day is kept, so the
+# latest daily backup on S3 will be (safely) overwritten until the day changes.
+#
+# We use the plain text format (compressed). To restore a dump,
+# use psql, not pg_restore. E.g.
+#
+#     gunzip -c fluidinfo-<date>.db.gz | psql -1 <database-name> &> myrestore.log
+
+BACKUP_DIR=/var/lib/postgresql/backup
+BACKUP_FILE=$BACKUP_DIR/fluidinfo-`date +%Y%m%d-%H%M%S`.db.gz
+BACKUP_MASK=$BACKUP_DIR/fluidinfo-*.db.gz
+DAILY_ARCHIVE_BASE_FILENAME=fluidinfo-`date +%Y%m%d`.db.gz
+
+# A S3 uploader that supports parallel multipart uploads, retries, and exits
+# non-zero on error
+S3_UPLOADER={{ deployment-path }}/current/fluidinfo/bin/s3-multipart/s3-mp-upload.py
+
+
+# Remove old backups until there's room for one at 5% growth. Calculations done
+# in MB to stay in the confines of 32-bit integers (mawk, possibly others).
+# If there is no previous backup, assume ~43000 MB.
+PREVIOUS_BACKUP_SIZE=$(stat -c'%s' $(ls $BACKUP_MASK -t 2> /dev/null | head -1) 2> /dev/null || echo "45000000000")
+ESTIMATED_SPACE_NEEDED=$(echo "1.05 * $PREVIOUS_BACKUP_SIZE/1024^2"|bc)
+
+# Function: Return free space in backup directory in MB
+get_free_space() {
+	env BLOCKSIZE=1048576 df $BACKUP_DIR | awk 'NR==2 {print $4}'
+}
+
+while [ "$(get_free_space)" -lt "$ESTIMATED_SPACE_NEEDED" ]; do
+	NUM_BACKUPS=$(ls $BACKUP_MASK 2> /dev/null | wc -l)
+	if [ "$NUM_BACKUPS" -eq 0 ]; then
+		echo "ERROR: Need more space, but no old backups to remove." >&2
+		exit 1
+	else
+		if [ "$NUM_BACKUPS" -gt 1 ]; then
+			OLDEST_BACKUP=$(ls -tr $BACKUP_MASK | head -1)
+			#echo "Removing $OLDEST_BACKUP to free up space."
+			rm $OLDEST_BACKUP
+		else
+			echo "ERROR: Need more space, but won't delete the most recent backup." >&2
+			exit 1
+		fi
+	fi
+done
+
+# Ensure there's room - can occur if no previous backups were deletable but the
+# free space is still insufficient
+if [ "$(get_free_space)" -lt "$ESTIMATED_SPACE_NEEDED" ]; then
+	echo "ERROR: Insufficient free space to proceed with dump. Insert coin to continue." >&2
+	exit 1
+fi
+
+# Dump into a file with suffix .dumping to mark unfinished dumps (~5h)
+nice pg_dump --format plain --compress 6 --file $BACKUP_FILE.dumping fluidinfo
+mv $BACKUP_FILE.dumping $BACKUP_FILE
+
+# Copy to S3 - this is safe, as S3 will not overwrite the file until the upload
+# is complete. (~1h)
+$S3_UPLOADER -q -f -np 3 -s 512 $BACKUP_FILE s3://mybucket.example.com/{{ server-name }}/backup/postgresql/$DAILY_ARCHIVE_BASE_FILENAME
+
+# NOTE: Failed multipart uploads can leave significant S3 storage in limbo that
+# you will be billed for. Normally, boto tries to clean up after itself when
+# failing, but S3 has been seen erroring on those cleanup requests too.
+# To check for such stale multipart uploads, use:
+#
+#	s3-mp-cleanup.py s3://mybucket.example.com
+#
+# And then peruse it's output to review and delete stale multipart uploads.

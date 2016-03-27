@@ -1,0 +1,32 @@
+-e bzr+http://bazaar.launchpad.net/~txfluiddb-maint/txfluiddb/trunk/#egg=txfluiddb-dev
+-e bzr+http://bazaar.launchpad.net/~jkakar/commandant/trunk#egg=commandant-dev
+###
+# txsolr fix by terry in place until ceronman accepts pull request at https://github.com/ceronman/txsolr/pull/2
+# Original txsolr line commented out below.  Jan 2, 2014.
+# -e bzr+http://bazaar.launchpad.net/~ceronman/txsolr/trunk#egg=txsolr-dev
+git+https://github.com/terrycojones/txsolr.git@fix-post-charset-1#egg=txsolr-dev
+###
+-e bzr+http://bazaar.launchpad.net/~storm/storm/trunk/#egg=storm-dev
+-e bzr+http://bazaar.launchpad.net/~fom-dev/fom/trunk/#egg=fom-dev
+redis==2.7.2
+hiredis==0.1.1
+transaction==1.3.0
+zope.component==4.0.0
+zope.interface==4.0.1
+Twisted==11.0.0
+pep8==1.4.5
+pyflakes==0.5.0
+pyasn1==0.1.4
+oauth2==1.5.211
+Fabric==1.4.3
+pyOpenSSL==0.13
+Jinja2==2.6
+ply==3.4
+psycopg2==2.4.5
+Sphinx==1.1.3
+testresources==0.2.5
+bzr==2.6b2
+boto==2.8.0
+simplejson==2.6.2
+# for fom - can be removed when fom is updated to support requests 1.x -- see http://docs.python-requests.org/en/latest/api/#migrating-to-1-x
+requests==0.14.2

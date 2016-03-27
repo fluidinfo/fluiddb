@@ -1,0 +1,16 @@
+2011-06-14 06:36:49,166     INFO  Request  hifodhlmhppaczbo: Headers: {'content-length': '174',  'content-type': 'application/vnd.fluiddb.value+json',  'accept': '*/*'}
+2011-06-14 10:33:33,312    ERROR  Unknown path u'fluidinfo/chrome-ext.xml'.
+Traceback (most recent call last):
+  File "/fluiddb/api/value.py", line 47, in run
+    result = tagValues.get([objectID], [path])
+  File "/fluiddb/security/value.py", line 25, in get
+    deniedOperations = self._permissions.check(pathsAndOperations)
+  File "/fluiddb/model/permission.py", line 298, in check
+    return checker.check(values)
+  File "/fluiddb/model/permission.py", line 444, in check
+    return deniedOperations + self._getDeniedOperations(storedOperations)
+  File "/fluiddb/model/permission.py", line 368, in _getDeniedOperations
+    raise UnknownPathError(unknownPaths)
+UnknownPathError: Unknown path u'fluidinfo/chrome-ext.xml'.
+2011-06-14 11:36:47,068     INFO  127.0.0.1 - -  [14/Jun/2011:06:36:46 +0000] "POST /objects HTTP/1.0"  201 131 "-" "fom/0.9.2"
+2011-06-14 11:36:49,166     INFO  Request  hifodhlmhppaczbo: Headers: {'content-length': '174',  'content-type': 'application/vnd.fluiddb.value+json',  'accept': '*/*'}

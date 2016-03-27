@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+from subprocess import call
+import sys
+
+DEVNULL = open('/dev/null', 'w')
+
+DEPENDENCIES = ['ant',
+                'bzr',
+                'git',
+                'junit4',
+                'libpg-java',
+                'postgresql-9.1',
+                'postgresql-server-dev-9.1',
+                'python-dev',
+                'redis-server',
+                'python-pip',
+                'python-virtualenv',
+                'solr-common',
+                'solr-tomcat',
+                'tomcat6',
+                'openjdk-6-jdk',
+                'libcommons-lang-java',
+                'make',
+                'libvelocity-tools-java']
+
+
+def main():
+    """Check package dependencies and display an error if any are missing."""
+    missingPackages = []
+    for dep in DEPENDENCIES:
+        result = call('dpkg-query -l %s' % dep, shell=True,
+                      stdout=DEVNULL, stderr=DEVNULL)
+
+        if result != 0:
+            missingPackages.append(dep)
+
+    if missingPackages:
+        print '** DEPENDENCIES MISSING **'
+        print
+        print 'The following packages are not installed:'
+        print '\t' + ' '.join(missingPackages)
+        return 1
+    else:
+        return 0
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1,0 +1,2 @@
+00 00,06,12,18 * * * /var/lib/postgresql/scripts/backup.sh
+* * * * * /var/lib/postgresql/scripts/clean-dirty-objects.sh

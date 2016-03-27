@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<project name="TagValueTransformer" default="compile">
+    <property name="junit.output.dir" value="junit"/>
+
+    <path id="junit.classpath">
+        <pathelement location="classes"/>
+        <pathelement location="classes-tests"/>
+        <pathelement location="/usr/share/java/junit4.jar"/>
+        <pathelement location="/usr/share/java/noggit.jar"/>
+        <pathelement location="/usr/share/java/postgresql.jar"/>
+        <pathelement location="/usr/share/java/commons-codec.jar"/>
+        <pathelement location="/usr/share/java/slf4j-api.jar"/>
+        <pathelement location="/usr/share/java/slf4j-jdk14.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="classes"/>
+        <delete dir="classes-tests"/>
+        <delete dir="junit"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="classes"/>
+        <javac srcdir="java/src" destdir="classes" classpath="/usr/share/java/noggit.jar;/usr/share/java/junit4.jar;/usr/share/java/postgresql.jar;/usr/share/java/commons-codec.jar;/usr/share/java/slf4j-api.jar;/usr/share/java/slf4j-jdk14.jar;classes" debug="true">
+            <compilerarg value="-Xlint"/>
+        </javac>
+    </target>
+
+    <target name="compile-test" depends="compile">
+        <mkdir dir="classes-tests"/>
+        <javac srcdir="java/test" destdir="classes-tests" classpath="/usr/share/java/noggit.jar;/usr/share/java/junit4.jar;/usr/share/java/postgresql.jar;/usr/share/java/commons-codec.jar;/usr/share/java/slf4j-api.jar;/usr/share/java/slf4j-jdk14.jar;classes" debug="true">
+            <compilerarg value="-Xlint"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="dist"/>
+        <jar destfile="dist/tagvaluetransformer.jar">
+            <fileset dir="classes" includes="**/*.class"/>
+        </jar>
+    </target>
+
+    <!-- Target: Run JUnit test classes. -->
+    <target name="test" depends="compile-test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr" showoutput="true">
+            <formatter type="xml"/>
+            <!-- Add all your test class names here. --> 
+            <test name="com.fluidinfo.solr.dataimporthandler.TestTagValueTransformer" todir="${junit.output.dir}"/>
+            <classpath refid="junit.classpath"/>
+        </junit>
+    </target>
+</project>

@@ -1,0 +1,8 @@
+[Credentials]
+aws_access_key_id = {{ aws-access-key }}
+aws_secret_access_key = {{ aws-secret-key }}
+
+[Boto]
+debug = 0
+; increase retries from the default 5 so the backup doesn't fail so soon when S3 throws another hissy fit
+num_retries = 13

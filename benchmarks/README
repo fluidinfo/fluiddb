@@ -1,0 +1,69 @@
+Setting up The Grinder
+----------------------
+
+Note: In the future we should use Buildout to automate these steps.
+
+1) Make sure you have Java 6. (If you're running Solr, you probably have it
+already)
+
+2) Download and extract Grinder 3.4: http://sourceforge.net/projects/grinder/
+
+3) Download Jython 2.5.2: http://sourceforge.net/projects/jython/
+   NOTE: Don't use the Ubuntu's jython package.
+
+   Install it using:
+   $ java -jar jython_installer-2.5.2rc2.jar
+
+4)Replace Grinder's Jython with your new Jython:
+
+  $ cd /path/to/grinder/lib
+  $ mv jython.jar jython.jar.bak
+  $ ln -s /path/to/jython/jython.jar .
+
+5) Install setuptools for jython:
+   $ wget http://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz
+   $ tar -zxvf setuptools-0.6c11.tar.gz
+   $ cd setuptools-0.6c11
+   $ /path/to/jython/bin/jython setup.py install
+
+6) Install simplejson for jython:
+   $ /path/to/jython/bin/easy_install simplejson
+
+7) Install httplib2 for jython:
+   $ /path/to/jython/bin/easy_install httplib2
+
+8) Install fom for jython:
+   $ /path/to/jython/bin/easy_install fom
+
+
+Running the benchmarks
+----------------------
+
+1) Setup the environment:
+
+   $ export GRINDER_HOME=/path/to/grinder
+   $ export JYTHON_HOME=/path/to/jython
+   $ export FLUIDDB_ENDPOINT=http://localhost:8880
+   $ export FLUIDDB_ADMIN_USERNAME=fluiddb
+   $ export FLUIDDB_ADMIN_PASSWORD=secret
+   $ export FLUIDDB_INDEXING_SERVER_URL=http://localhost:8080/solr/
+
+2) Run the tests:
+
+   $ bin/start-fluiddb
+   $ bin/prepare-for-testing
+   $ cd benchmarks
+   $ make
+
+   The output file will look like out_hostname-0.log
+
+If you want to tests different scenarios, change the settings in the
+properties file: main.properties
+
+
+Create new tests
+----------------
+
+You can use FOM to create new tests. Take a look at the examples at
+objects.py. Use the @test decorator for new tests. Add the test to the main.py
+script.

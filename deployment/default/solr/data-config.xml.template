@@ -1,0 +1,13 @@
+<dataConfig>
+    <dataSource driver="org.postgresql.Driver"
+        url="jdbc:{{ postgres-uri }}"
+        user="fluidinfo" password="fluidinfo" convertType="false"
+        readOnly="false" autoCommit="true"/>
+    <document>
+        <entity name="item"
+            query="SELECT * FROM get_objects('${dataimporter.request.clean}', {{ num-shards }}, {{ shard-id }});"
+            transformer="com.fluidinfo.solr.dataimporthandler.TagValueTransformer">
+            <field column="object_id" name="fluiddb/id"/>
+        </entity>
+    </document>
+</dataConfig>
